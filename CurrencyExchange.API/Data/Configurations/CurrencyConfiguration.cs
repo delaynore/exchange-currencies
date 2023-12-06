@@ -12,6 +12,7 @@ namespace CurrencyExchange.API.Data.Configurations
             builder.Property(x=>x.FullName).HasMaxLength(100);
             builder.Property(x => x.Code).HasColumnType("varchar(3)");
             builder.Property(x => x.Sign).HasMaxLength(3);
+
         }
     }
 }

@@ -7,7 +7,5 @@
         public required string Code { get; set; }
         public required string FullName { get; set; }
         public required string Sign { get; set; }
-
-        public ICollection<ExchangeRate> ExchangeRates { get; set; } = new List<ExchangeRate>();
     }
 }

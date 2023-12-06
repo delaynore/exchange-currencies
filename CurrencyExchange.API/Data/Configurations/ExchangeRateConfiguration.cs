@@ -9,12 +9,12 @@ namespace CurrencyExchange.API.Data.Configurations
         public void Configure(EntityTypeBuilder<ExchangeRate> builder)
         {
             builder.HasOne(x=>x.TargetCurrency)
-                .WithMany(c=>c.ExchangeRates)
+                .WithMany()
                 .HasForeignKey(x=>x.TargetCurrencyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.BaseCurrency)
-                .WithMany(c => c.ExchangeRates)
+                .WithMany()
                 .HasForeignKey(x => x.BaseCurrencyId)
                 .OnDelete(DeleteBehavior.Restrict);
 

@@ -1,5 +1,6 @@
 ﻿using CurrencyExchange.API.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace CurrencyExchange.API.Data
 {
@@ -7,6 +8,12 @@ namespace CurrencyExchange.API.Data
     {
         public DbSet<Currency> Currencies => Set<Currency>();
         public DbSet<ExchangeRate> ExchangeRates => Set<ExchangeRate>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            base.OnModelCreating(modelBuilder);
+        }
 
     }
 }
