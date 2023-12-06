@@ -38,13 +38,7 @@ namespace CurrencyExchange.API.Repositories
 
         public void UpdateCurrency(Currency currency)
         {
-            var currencyToUpdate = _context.Currencies.Find(currency.Id);
-            if (currencyToUpdate is null) return;
-
-            currencyToUpdate.Code = currency.Code;
-            currencyToUpdate.FullName = currency.FullName;
-            currencyToUpdate.Sign = currency.Sign;
-
+            _context.Currencies.Update(currency);
             _context.SaveChanges();
         }
     }

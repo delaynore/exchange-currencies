@@ -38,13 +38,7 @@ namespace CurrencyExchange.API.Repositories
 
         public void Update(ExchangeRate rate)
         {
-            var rateToUpdate = _context.ExchangeRates.Find(rate.Id);
-            if (rateToUpdate == null) return;
-
-            rateToUpdate.Rate = rate.Rate;
-            rateToUpdate.BaseCurrencyId = rate.BaseCurrencyId;
-            rateToUpdate.TargetCurrencyId = rate.TargetCurrencyId;
-
+            _context.ExchangeRates.Update(rate);
             _context.SaveChanges();
         }
     }
