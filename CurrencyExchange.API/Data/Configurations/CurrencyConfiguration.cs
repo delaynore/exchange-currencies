@@ -8,7 +8,7 @@ namespace CurrencyExchange.API.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Currency> builder)
         {
-            builder.HasAlternateKey(x => x.Code);
+            builder.HasIndex(x => x.Code).IsUnique();
             builder.Property(x=>x.FullName).HasMaxLength(100);
             builder.Property(x => x.Code).HasColumnType("varchar(3)");
             builder.Property(x => x.Sign).HasMaxLength(3);
