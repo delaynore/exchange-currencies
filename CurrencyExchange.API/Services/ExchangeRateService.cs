@@ -1,4 +1,6 @@
 ﻿using CurrencyExchange.API.Models;
+using CurrencyExchange.API.Models.Contracts.ExchangeRate;
+using CurrencyExchange.API.Models.Contracts.Currency;
 using CurrencyExchange.API.Repositories;
 
 namespace CurrencyExchange.API.Services
@@ -8,9 +10,16 @@ namespace CurrencyExchange.API.Services
 
         private readonly IExchangeRateRepository _exchangeRateRepository = exchangeRateRepository;
 
-        public void Create(ExchangeRate rate)
+        public void Create(ExchangeRateRequest exchangeRate)
         {
-           _exchangeRateRepository.Create(rate);
+            var rateToCreate = new ExchangeRate()
+            {
+                BaseCurrencyId = exchangeRate.BaseCurrencyId,
+                TargetCurrencyId = exchangeRate.TargetCurrencyId,
+                Rate = exchangeRate.Rate
+            };
+
+            _exchangeRateRepository.Create(rateToCreate);
         }
 
         public void Delete(int id)
@@ -18,24 +27,71 @@ namespace CurrencyExchange.API.Services
             _exchangeRateRepository.Delete(id);
         }
 
-        public IQueryable<ExchangeRate> GetAll()
+        public IQueryable<ExchangeRateResponse> GetAll()
         {
-            return _exchangeRateRepository.GetAll();
+            return _exchangeRateRepository
+                .GetAll()
+                .Select(d => new ExchangeRateResponse(
+                    d.Id,
+                    new CurrencyResponse(
+                        d.BaseCurrencyId, 
+                        d.BaseCurrency.Code, 
+                        d.BaseCurrency.FullName, 
+                        d.BaseCurrency.Sign),
+                    new CurrencyResponse(
+                        d.TargetCurrencyId,
+                        d.TargetCurrency.Code, 
+                        d.TargetCurrency.FullName, 
+                        d.TargetCurrency.Sign),
+                    d.Rate));
         }
 
-        public ExchangeRate? GetByCodes(string baseCode, string targetCode)
+        public ExchangeRateResponse? GetByCodes(string baseCode, string targetCode)
         {
-            return _exchangeRateRepository.GetByCodes(baseCode, targetCode);
+            var exchangeRate = _exchangeRateRepository.GetByCodes(baseCode, targetCode);
+            if (exchangeRate is null) return null;
+            return new ExchangeRateResponse(exchangeRate.Id,
+                    new CurrencyResponse(
+                        exchangeRate.BaseCurrencyId,
+                        exchangeRate.BaseCurrency.Code,
+                        exchangeRate.BaseCurrency.FullName,
+                        exchangeRate.BaseCurrency.Sign),
+                    new CurrencyResponse(
+                        exchangeRate.TargetCurrencyId,
+                        exchangeRate.TargetCurrency.Code,
+                        exchangeRate.TargetCurrency.FullName,
+                        exchangeRate.TargetCurrency.Sign),
+                    exchangeRate.Rate);
         }
 
-        public ExchangeRate? GetById(int id)
+        public ExchangeRateResponse? GetById(int id)
         {
-           return _exchangeRateRepository.GeteById(id);
+            var exchangeRate = _exchangeRateRepository.GetById(id);
+            if (exchangeRate is null) return null;
+            return new ExchangeRateResponse(exchangeRate.Id,
+                    new CurrencyResponse(
+                        exchangeRate.BaseCurrencyId,
+                        exchangeRate.BaseCurrency.Code,
+                        exchangeRate.BaseCurrency.FullName,
+                        exchangeRate.BaseCurrency.Sign),
+                    new CurrencyResponse(
+                        exchangeRate.TargetCurrencyId,
+                        exchangeRate.TargetCurrency.Code,
+                        exchangeRate.TargetCurrency.FullName,
+                        exchangeRate.TargetCurrency.Sign),
+                    exchangeRate.Rate);
         }
 
-        public void Update(ExchangeRate rate)
+        public void Update(int id, ExchangeRateRequest exchangeRate)
         {
-            _exchangeRateRepository.Update(rate);
+            var exchangeRateToUpdate = _exchangeRateRepository.GetById(id);
+            if (exchangeRateToUpdate is null) return; ///?????
+
+            exchangeRateToUpdate.Rate = exchangeRate.Rate;
+            exchangeRateToUpdate.TargetCurrencyId = exchangeRate.TargetCurrencyId;
+            exchangeRateToUpdate.BaseCurrencyId = exchangeRate.BaseCurrencyId;
+
+            _exchangeRateRepository.Update(exchangeRateToUpdate);
         }
     }
 }

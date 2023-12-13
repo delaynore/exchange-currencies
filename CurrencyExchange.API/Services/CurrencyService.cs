@@ -1,4 +1,5 @@
 ﻿using CurrencyExchange.API.Models;
+using CurrencyExchange.API.Models.Contracts.Currency;
 using CurrencyExchange.API.Repositories;
 
 namespace CurrencyExchange.API.Services
@@ -7,9 +8,16 @@ namespace CurrencyExchange.API.Services
     {
         private readonly ICurrencyRepository _currencyRepository = currencyRepository;
 
-        public void CreateCurrency(Currency currency)
+        public void CreateCurrency(CurrencyRequest currency)
         {
-            _currencyRepository.CreateCurrency(currency);
+            var currencyToCreate = new Currency()
+            {
+                FullName = currency.FullName,
+                Code = currency.Code,
+                Sign = currency.Sign,
+            };
+
+            _currencyRepository.CreateCurrency(currencyToCreate);
         }
 
         public void DeleteCurrency(int id)
@@ -17,24 +25,51 @@ namespace CurrencyExchange.API.Services
             _currencyRepository.DeleteCurrency(id);
         }
 
-        public IQueryable<Currency> GetAll()
+        public IQueryable<CurrencyResponse> GetAll()
         {
-           return _currencyRepository.GetAll();
+           return _currencyRepository
+                .GetAll()
+                .Select(d => new CurrencyResponse(
+                    d.Id,
+                    d.Code,
+                    d.FullName,
+                    d.Sign));
         }
 
-        public Currency? GetCurrencyByCode(string code)
+        public CurrencyResponse? GetCurrencyByCode(string code)
         {
-            return _currencyRepository.GetCurrencyByCode(code);
+            var currency = _currencyRepository.GetCurrencyByCode(code);
+            if (currency is null) return null;
+
+            return new CurrencyResponse(
+                currency.Id,
+                currency.Code,
+                currency.FullName,
+                currency.Sign);
         }
 
-        public Currency? GetCurrencyById(int id)
+        public CurrencyResponse? GetCurrencyById(int id)
         {
-            return _currencyRepository.GetCurrencyById(id);
+            var currency = _currencyRepository.GetCurrencyById(id);
+            if (currency is null) return null;
+
+            return new CurrencyResponse(
+                currency.Id,
+                currency.Code,
+                currency.FullName,
+                currency.Sign);
         }
 
-        public void UpdateCurrency(Currency currency)
+        public void UpdateCurrency(int id, CurrencyRequest currency)
         {
-            _currencyRepository.UpdateCurrency(currency);
+            var currencyToUpdate = _currencyRepository.GetCurrencyById(id);
+            if(currencyToUpdate is null) return;
+
+            currencyToUpdate.Code = currency.Code;
+            currencyToUpdate.FullName = currency.FullName;
+            currencyToUpdate.Sign = currency.Sign;
+
+            _currencyRepository.UpdateCurrency(currencyToUpdate);
         }
     }
 }

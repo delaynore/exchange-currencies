@@ -1,4 +1,5 @@
 ﻿using CurrencyExchange.API.Models;
+using CurrencyExchange.API.Models.Contracts.Currency;
 using CurrencyExchange.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,9 @@ namespace CurrencyExchange.API.Controllers
         }
 
         [HttpGet("{code}")]
-        public IActionResult GetCurrency(string code) 
+        public IActionResult GetCurrency(string code)
         {
-            if(code.Length != 3) return BadRequest(new { message = $"Invalid code of currency - {code}" });
+            if (code.Length != 3) return BadRequest(new { message = $"Invalid code of currency - {code}" });
 
             var currency = _currencyService.GetCurrencyByCode(code.ToUpper());
             if (currency is null) return NotFound();
@@ -28,23 +29,19 @@ namespace CurrencyExchange.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCurrency(Currency newCurrency)
+        public IActionResult CreateCurrency(CurrencyRequest newCurrency)
         {
             _currencyService.CreateCurrency(newCurrency);
             return Ok();
         }
 
-        [HttpPut]
-        public IActionResult UpdateCurrency(Currency updateCurrency)
+        [HttpPut("{id}")]
+        public IActionResult UpdateCurrency(int id, CurrencyRequest updateCurrency)
         {
-            var currency = _currencyService.GetCurrencyById(updateCurrency.Id);
-            if (currency is null) return BadRequest();
+            var currency = _currencyService.GetCurrencyById(id);
+            if (currency is null) return BadRequest();///????
 
-            //вынести в сервис
-            currency.FullName = updateCurrency.FullName;
-            currency.Code = updateCurrency.Code;
-            currency.Sign = updateCurrency.Sign;
-            _currencyService.UpdateCurrency(currency);
+            _currencyService.UpdateCurrency(id, updateCurrency);
             return Ok();
         }
 

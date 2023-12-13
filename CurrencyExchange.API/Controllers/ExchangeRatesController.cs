@@ -1,4 +1,5 @@
 ﻿using CurrencyExchange.API.Models;
+using CurrencyExchange.API.Models.Contracts.ExchangeRate;
 using CurrencyExchange.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +35,7 @@ namespace CurrencyExchange.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateExchangeRate(ExchangeRate newExchangeRate)
+        public IActionResult CreateExchangeRate(ExchangeRateRequest newExchangeRate)
         {
             if (newExchangeRate.BaseCurrencyId.Equals(newExchangeRate.TargetCurrencyId))
             {

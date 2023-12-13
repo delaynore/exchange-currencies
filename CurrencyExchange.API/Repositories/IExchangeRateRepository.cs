@@ -5,7 +5,7 @@ namespace CurrencyExchange.API.Repositories
     public interface IExchangeRateRepository
     {
         IQueryable<ExchangeRate> GetAll();
-        ExchangeRate? GeteById(int id);
+        ExchangeRate? GetById(int id);
         ExchangeRate? GetByCodes(string baseCode, string targetCode);
 
         void Create(ExchangeRate rate);

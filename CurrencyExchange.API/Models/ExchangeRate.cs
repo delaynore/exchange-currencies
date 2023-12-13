@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CurrencyExchange.API.Models
 {
@@ -7,17 +6,13 @@ namespace CurrencyExchange.API.Models
     {
         public int Id { get; set; }
 
-        [Required]
         public int BaseCurrencyId { get; set; }
-        public Currency BaseCurrency { get; set; }
+        public Currency BaseCurrency { get; set; } = null!;
 
-        [Required]
         public int TargetCurrencyId { get; set; }
-        public Currency TargetCurrency { get; set; }
+        public Currency TargetCurrency { get; set; } = null!;
 
         [Column(TypeName = "decimal(6)")]
-        [Required]
-        [Range(1e-4, double.MaxValue)]
         public decimal Rate {  get; set; }
     }
 }

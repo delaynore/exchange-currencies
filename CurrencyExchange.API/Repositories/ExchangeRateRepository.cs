@@ -8,9 +8,9 @@ namespace CurrencyExchange.API.Repositories
     {
         private readonly CurrencyExchangeDbContext _context = context;
 
-        public void Create(ExchangeRate rate)
+        public void Create(ExchangeRate exchangeRate)
         {
-            _context.ExchangeRates.Add(rate);
+            _context.ExchangeRates.Add(exchangeRate);
             _context.SaveChanges();
         }
 
@@ -22,23 +22,31 @@ namespace CurrencyExchange.API.Repositories
 
         public IQueryable<ExchangeRate> GetAll()
         {
-            return _context.ExchangeRates.AsNoTracking();
+            return _context.ExchangeRates
+                .Include(x => x.BaseCurrency)
+                .Include(x => x.TargetCurrency)
+                .AsNoTracking();
         }
 
         public ExchangeRate? GetByCodes(string baseCode, string targetCode)
         {
             return _context.ExchangeRates
-                .FirstOrDefault(x => x.BaseCurrencyId.Equals(baseCode) && x.TargetCurrencyId.Equals(targetCode));
+                .Include(x => x.BaseCurrency)
+                .Include(x => x.TargetCurrency)
+                .SingleOrDefault(x => x.BaseCurrencyId.Equals(baseCode) && x.TargetCurrencyId.Equals(targetCode));
         }
 
-        public ExchangeRate? GeteById(int id)
+        public ExchangeRate? GetById(int id)
         {
-            return _context.ExchangeRates.Find(id);
+            return _context.ExchangeRates
+                .Include(x=>x.BaseCurrency)
+                .Include(x=>x.TargetCurrency)
+                .SingleOrDefault(x => x.Id.Equals(id));
         }
 
-        public void Update(ExchangeRate rate)
+        public void Update(ExchangeRate exchangeRate)
         {
-            _context.ExchangeRates.Update(rate);
+            _context.ExchangeRates.Update(exchangeRate);
             _context.SaveChanges();
         }
     }

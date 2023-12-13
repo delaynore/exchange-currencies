@@ -38,8 +38,16 @@ namespace CurrencyExchange.API.Repositories
 
         public void UpdateCurrency(Currency currency)
         {
-            _context.Currencies.Update(currency);
-            _context.SaveChanges();
+            try
+            {
+                _context.Currencies.Update(currency);
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

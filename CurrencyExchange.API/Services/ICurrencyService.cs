@@ -1,14 +1,15 @@
 ﻿using CurrencyExchange.API.Models;
+using CurrencyExchange.API.Models.Contracts.Currency;
 
 namespace CurrencyExchange.API.Services
 {
     public interface ICurrencyService
     {
-        IQueryable<Currency> GetAll();
-        Currency? GetCurrencyById(int id);
-        Currency? GetCurrencyByCode(string code);
-        void CreateCurrency(Currency currency);
-        void UpdateCurrency(Currency currency);
+        IQueryable<CurrencyResponse> GetAll();
+        CurrencyResponse? GetCurrencyById(int id);
+        CurrencyResponse? GetCurrencyByCode(string code);
+        void CreateCurrency(CurrencyRequest currency);
+        void UpdateCurrency(int id, CurrencyRequest currency);
         void DeleteCurrency(int id);
     }
 }
