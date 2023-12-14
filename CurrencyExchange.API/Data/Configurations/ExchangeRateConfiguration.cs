@@ -18,7 +18,7 @@ namespace CurrencyExchange.API.Data.Configurations
                 .HasForeignKey(x => x.BaseCurrencyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasAlternateKey(x => new { x.TargetCurrencyId, x.BaseCurrencyId });
+            builder.HasIndex(x => new { x.TargetCurrencyId, x.BaseCurrencyId }).IsUnique();
         }
     }
 }
