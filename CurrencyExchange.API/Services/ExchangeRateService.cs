@@ -27,7 +27,7 @@ namespace CurrencyExchange.API.Services
             _exchangeRateRepository.Delete(id);
         }
 
-        public IQueryable<ExchangeRateResponse> GetAll()
+        public List<ExchangeRateResponse> GetAll()
         {
             return _exchangeRateRepository
                 .GetAll()
@@ -43,7 +43,8 @@ namespace CurrencyExchange.API.Services
                         d.TargetCurrency.Code, 
                         d.TargetCurrency.FullName, 
                         d.TargetCurrency.Sign),
-                    d.Rate));
+                    d.Rate))
+                .ToList();
         }
 
         public ExchangeRateResponse? GetByCodes(string baseCode, string targetCode)

@@ -25,7 +25,7 @@ namespace CurrencyExchange.API.Services
             _currencyRepository.DeleteCurrency(id);
         }
 
-        public IQueryable<CurrencyResponse> GetAll()
+        public List<CurrencyResponse> GetAll()
         {
            return _currencyRepository
                 .GetAll()
@@ -33,7 +33,8 @@ namespace CurrencyExchange.API.Services
                     d.Id,
                     d.Code,
                     d.FullName,
-                    d.Sign));
+                    d.Sign))
+                .ToList();
         }
 
         public CurrencyResponse? GetCurrencyByCode(string code)

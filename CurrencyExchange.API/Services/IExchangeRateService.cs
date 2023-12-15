@@ -6,7 +6,7 @@ namespace CurrencyExchange.API.Services
 {
     public interface IExchangeRateService
     {
-        IQueryable<ExchangeRateResponse> GetAll();
+        List<ExchangeRateResponse> GetAll();
         ExchangeRateResponse? GetById(int id);
         ExchangeRateResponse? GetByCodes(string baseCode, string targetCode);
 

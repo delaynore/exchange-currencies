@@ -5,7 +5,7 @@ namespace CurrencyExchange.API.Services
 {
     public interface ICurrencyService
     {
-        IQueryable<CurrencyResponse> GetAll();
+        List<CurrencyResponse> GetAll();
         CurrencyResponse? GetCurrencyById(int id);
         CurrencyResponse? GetCurrencyByCode(string code);
         void CreateCurrency(CurrencyRequest currency);
