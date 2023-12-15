@@ -2,32 +2,63 @@
 using CurrencyExchange.API.Models.Contracts.ExchangeRate;
 using CurrencyExchange.API.Models.Contracts.Currency;
 using CurrencyExchange.API.Repositories;
+using CurrencyExchange.API.Response;
+using CurrencyExchange.API.Errors;
 
 namespace CurrencyExchange.API.Services
 {
-    public class ExchangeRateService(IExchangeRateRepository exchangeRateRepository) : IExchangeRateService
+    public class ExchangeRateService
+        (IExchangeRateRepository exchangeRateRepository, 
+        ICurrencyRepository currencyRepository) : IExchangeRateService
     {
 
         private readonly IExchangeRateRepository _exchangeRateRepository = exchangeRateRepository;
+        private readonly ICurrencyRepository _currencyRepository = currencyRepository;
 
-        public void Create(ExchangeRateRequest exchangeRate)
+        public Result<int> Create(ExchangeRateRequest exchangeRate)
         {
+            if (_currencyRepository.GetCurrencyById(exchangeRate.TargetCurrencyId) is null)
+                return Result.Failure<int>(ApplicationErrors.ExchangeRateErrors.NotFound);
+
+            if (_currencyRepository.GetCurrencyById(exchangeRate.BaseCurrencyId) is null)
+                return Result.Failure<int>(ApplicationErrors.ExchangeRateErrors.NotFound);
+
+            if (exchangeRate.BaseCurrencyId == exchangeRate.TargetCurrencyId)
+                return Result.Failure<int>(ApplicationErrors.ExchangeRateErrors.SameCurrencies);
+
             var rateToCreate = new ExchangeRate()
             {
                 BaseCurrencyId = exchangeRate.BaseCurrencyId,
                 TargetCurrencyId = exchangeRate.TargetCurrencyId,
                 Rate = exchangeRate.Rate
             };
+            try
+            {
+                _exchangeRateRepository.Create(rateToCreate);
+                return rateToCreate.Id;
+            }
+            catch (Exception)
+            {
 
-            _exchangeRateRepository.Create(rateToCreate);
+                throw;
+            }
         }
 
-        public void Delete(int id)
+        public Result Delete(int id)
         {
-            _exchangeRateRepository.Delete(id);
+            try
+            {
+                _exchangeRateRepository.Delete(id);
+                return Result.Success();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        public List<ExchangeRateResponse> GetAll()
+        public Result<List<ExchangeRateResponse>> GetAll()
         {
             return _exchangeRateRepository
                 .GetAll()
@@ -47,10 +78,12 @@ namespace CurrencyExchange.API.Services
                 .ToList();
         }
 
-        public ExchangeRateResponse? GetByCodes(string baseCode, string targetCode)
+        public Result<ExchangeRateResponse> GetByCodes(string baseCode, string targetCode)
         {
             var exchangeRate = _exchangeRateRepository.GetByCodes(baseCode, targetCode);
-            if (exchangeRate is null) return null;
+            if (exchangeRate is null) 
+                return Result.Failure<ExchangeRateResponse>(ApplicationErrors.ExchangeRateErrors.NotFound);
+            
             return new ExchangeRateResponse(exchangeRate.Id,
                     new CurrencyResponse(
                         exchangeRate.BaseCurrencyId,
@@ -65,10 +98,12 @@ namespace CurrencyExchange.API.Services
                     exchangeRate.Rate);
         }
 
-        public ExchangeRateResponse? GetById(int id)
+        public Result<ExchangeRateResponse> GetById(int id)
         {
             var exchangeRate = _exchangeRateRepository.GetById(id);
-            if (exchangeRate is null) return null;
+            if (exchangeRate is null)
+                return Result.Failure<ExchangeRateResponse>(ApplicationErrors.ExchangeRateErrors.NotFound);
+            
             return new ExchangeRateResponse(exchangeRate.Id,
                     new CurrencyResponse(
                         exchangeRate.BaseCurrencyId,
@@ -83,16 +118,26 @@ namespace CurrencyExchange.API.Services
                     exchangeRate.Rate);
         }
 
-        public void Update(int id, ExchangeRateRequest exchangeRate)
+        public Result Update(int id, ExchangeRateRequest exchangeRate)
         {
             var exchangeRateToUpdate = _exchangeRateRepository.GetById(id);
-            if (exchangeRateToUpdate is null) return; ///?????
+            if (exchangeRateToUpdate is null) 
+                return Result.Failure(ApplicationErrors.ExchangeRateErrors.NotFound);
 
             exchangeRateToUpdate.Rate = exchangeRate.Rate;
             exchangeRateToUpdate.TargetCurrencyId = exchangeRate.TargetCurrencyId;
             exchangeRateToUpdate.BaseCurrencyId = exchangeRate.BaseCurrencyId;
 
-            _exchangeRateRepository.Update(exchangeRateToUpdate);
+            try
+            {
+                _exchangeRateRepository.Update(exchangeRateToUpdate);
+                return Result.Success();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

@@ -1,17 +1,18 @@
 ﻿using CurrencyExchange.API.Models;
 using CurrencyExchange.API.Models.Contracts.ExchangeRate;
+using CurrencyExchange.API.Response;
 
 
 namespace CurrencyExchange.API.Services
 {
     public interface IExchangeRateService
     {
-        List<ExchangeRateResponse> GetAll();
-        ExchangeRateResponse? GetById(int id);
-        ExchangeRateResponse? GetByCodes(string baseCode, string targetCode);
+        Result<List<ExchangeRateResponse>> GetAll();
+        Result<ExchangeRateResponse> GetById(int id);
+        Result<ExchangeRateResponse> GetByCodes(string baseCode, string targetCode);
 
-        void Create(ExchangeRateRequest exchangeRate);
-        void Update(int id, ExchangeRateRequest exchangeRate);
-        void Delete(int id);
+        Result<int> Create(ExchangeRateRequest exchangeRate);
+        Result Update(int id, ExchangeRateRequest exchangeRate);
+        Result Delete(int id);
     }
 }
