@@ -16,19 +16,11 @@ namespace CurrencyExchange.API.Controllers
             return Ok(result.Value);
         }
 
-        [HttpGet("{baseTarget}")]
-        public IActionResult GetExchangeRate(string baseTarget)
+        [HttpGet("{baseCurrency}-{targetCurrency}")]
+        public IActionResult GetExchangeRate(string baseCurrency, string targetCurrency)
         {
-            if (baseTarget is null) return BadRequest();
-            if (baseTarget.Length != 6) return BadRequest();
-
-            var baseCurrency = baseTarget[..3].ToUpper();
-            var targetCurrency = baseTarget[3..].ToUpper();
-
             var result = _exchangeRateService.GetByCodes(baseCurrency, targetCurrency);
-
             if (result.IsFailure) return NotFound();
-
             return Ok(result.Value);
         }
 
@@ -42,22 +34,14 @@ namespace CurrencyExchange.API.Controllers
         [HttpDelete("{id:int}")]
         public IActionResult DeleteExchangeRate(int id)
         {
-            if (id < 0)
-            {
-                ModelState.AddModelError(nameof(id), "Parameter can't be null");
-                return BadRequest(ModelState);
-            }
             var result = _exchangeRateService.Delete(id);
             return result.IsSuccess ? NoContent() : BadRequest(result.Error);
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult UpdateExchangeRate(int? id, ExchangeRateRequest exchangeRateRequest)
+        public IActionResult UpdateExchangeRate(int id, ExchangeRateRequest exchangeRateRequest)
         {
-            if (id is null) return BadRequest(ModelState);
-
-            var result = _exchangeRateService.Update(id.Value, exchangeRateRequest);
-
+            var result = _exchangeRateService.Update(id, exchangeRateRequest);
             return result.IsSuccess ? Ok() : BadRequest(result.Error);
         }
     }
