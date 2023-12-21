@@ -1,5 +1,4 @@
-﻿using CurrencyExchange.API.Models;
-using CurrencyExchange.API.Models.Contracts.Currency;
+﻿using CurrencyExchange.API.Models.Contracts.Currency;
 using CurrencyExchange.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +13,9 @@ namespace CurrencyExchange.API.Controllers
         [HttpGet]
         public IActionResult GetAllCurrencies()
         {
-            return Ok(_currencyService.GetAll());
+            var result = _currencyService.GetAll();
+            if(result.IsFailure) return NotFound();
+            return Ok(result.Value);
         }
 
         [HttpGet("{code}")]
@@ -23,7 +24,7 @@ namespace CurrencyExchange.API.Controllers
             if (code.Length != 3) return BadRequest(new { message = $"Invalid code of currency - {code}" });
 
             var currency = _currencyService.GetCurrencyByCode(code.ToUpper());
-            if (currency is null) return NotFound();
+            if (currency.IsFailure) return NotFound();
 
             return Ok(currency);
         }
@@ -31,25 +32,27 @@ namespace CurrencyExchange.API.Controllers
         [HttpPost]
         public IActionResult CreateCurrency(CurrencyRequest newCurrency)
         {
-            _currencyService.CreateCurrency(newCurrency);
-            return Ok();
+            var result = _currencyService.CreateCurrency(newCurrency);
+            if (result.IsFailure) return BadRequest();
+            return Created();
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateCurrency(int id, CurrencyRequest updateCurrency)
         {
-            var currency = _currencyService.GetCurrencyById(id);
-            if (currency is null) return BadRequest();///????
+            if (_currencyService.GetCurrencyById(id).IsFailure) return BadRequest();
 
-            _currencyService.UpdateCurrency(id, updateCurrency);
+            var result = _currencyService.UpdateCurrency(id, updateCurrency);
+            if (result.IsFailure) return BadRequest();
             return Ok();
         }
 
         [HttpDelete("{id:int}")]
         public IActionResult DeleteCurrency(int id)
         {
-            _currencyService.DeleteCurrency(id);
-            return Ok();
+            var result = _currencyService.DeleteCurrency(id);
+            if (result.IsFailure) return BadRequest();
+            return NoContent();
         }
 
     }

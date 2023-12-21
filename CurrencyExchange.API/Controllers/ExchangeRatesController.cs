@@ -1,9 +1,6 @@
-﻿using CurrencyExchange.API.Models;
-using CurrencyExchange.API.Models.Contracts.ExchangeRate;
+﻿using CurrencyExchange.API.Models.Contracts.ExchangeRate;
 using CurrencyExchange.API.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using System.Runtime.Serialization;
 
 namespace CurrencyExchange.API.Controllers
 {
@@ -16,37 +13,32 @@ namespace CurrencyExchange.API.Controllers
         [HttpGet]
         public IActionResult GetAllExchangeRates()
         {
-            return Ok(_exchangeRateService.GetAll());
+            var result = _exchangeRateService.GetAll();
+            if (result.IsFailure ) return NotFound();
+            return Ok(result.Value);
         }
 
         [HttpGet("{basetarget}")]
         public IActionResult GetExchangeRate(string basetarget)
         {
             if (basetarget is null) return BadRequest();
-
             if (basetarget.Length != 6) return BadRequest();
 
             var baseCurrency = basetarget[..3].ToUpper();
             var targetCurrency = basetarget[3..].ToUpper();
 
-            var exchangerate = _exchangeRateService.GetByCodes(baseCurrency, targetCurrency);
+            var result = _exchangeRateService.GetByCodes(baseCurrency, targetCurrency);
 
-            if (exchangerate is null) return NotFound();
+            if (result.IsFailure) return NotFound();
 
-            return Ok(_exchangeRateService.GetByCodes(baseCurrency, targetCurrency));
+            return Ok(result.Value);
         }
 
         [HttpPost]
         public IActionResult CreateExchangeRate(ExchangeRateRequest newExchangeRate)
         {
-            if (newExchangeRate.BaseCurrencyId.Equals(newExchangeRate.TargetCurrencyId))
-            {
-                ModelState.AddModelError("Code", "Base and Target must be different");
-                return BadRequest(ModelState);
-            }
-            _exchangeRateService.Create(newExchangeRate);
-
-            return Created();
+            var result = _exchangeRateService.Create(newExchangeRate);
+            return result.IsSuccess ? Created() : BadRequest();
         }
 
         [HttpDelete("{id?}")]
@@ -57,9 +49,8 @@ namespace CurrencyExchange.API.Controllers
                 ModelState.AddModelError(nameof(id), "Parameter can't be null");
                 return BadRequest(ModelState);
             }
-            _exchangeRateService.Delete(id.Value);
-
-            return NoContent();
+            var result = _exchangeRateService.Delete(id.Value);
+            return result.IsSuccess ? NoContent() : BadRequest();
         }
 
         [HttpPut("{id?}")]
@@ -67,9 +58,9 @@ namespace CurrencyExchange.API.Controllers
         {
             if (id is null) return BadRequest(ModelState);
 
-            _exchangeRateService.Update(id.Value, exchangeRateRequest);
+            var result = _exchangeRateService.Update(id.Value, exchangeRateRequest);
 
-            return Ok();
+            return result.IsSuccess ? Ok() : BadRequest();
         }
     }
 }
