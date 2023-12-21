@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CurrencyExchange.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ExchangeRatesController(IExchangeRateService exchangeRateService) : ControllerBase
+    public class ExchangeRatesController(IExchangeRateService exchangeRateService) : ApiBaseController
     {
         private readonly IExchangeRateService _exchangeRateService = exchangeRateService;
 
@@ -38,7 +36,7 @@ namespace CurrencyExchange.API.Controllers
         public IActionResult CreateExchangeRate(ExchangeRateRequest newExchangeRate)
         {
             var result = _exchangeRateService.Create(newExchangeRate);
-            return result.IsSuccess ? Created() : BadRequest();
+            return result.IsSuccess ? Created() : BadRequest(result.Error);
         }
 
         [HttpDelete("{id:int}")]
@@ -50,7 +48,7 @@ namespace CurrencyExchange.API.Controllers
                 return BadRequest(ModelState);
             }
             var result = _exchangeRateService.Delete(id);
-            return result.IsSuccess ? NoContent() : BadRequest();
+            return result.IsSuccess ? NoContent() : BadRequest(result.Error);
         }
 
         [HttpPut("{id:int}")]
@@ -60,7 +58,7 @@ namespace CurrencyExchange.API.Controllers
 
             var result = _exchangeRateService.Update(id.Value, exchangeRateRequest);
 
-            return result.IsSuccess ? Ok() : BadRequest();
+            return result.IsSuccess ? Ok() : BadRequest(result.Error);
         }
     }
 }
