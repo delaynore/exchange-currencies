@@ -16,6 +16,7 @@ builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
 builder.Services.AddScoped<IExchangeRateRepository, ExchangeRateRepository>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IExchangeRateService, ExchangeRateService>();
+builder.Services.AddScoped<IExchangeService, ExchangeService>();
 
 var app = builder.Build();
 

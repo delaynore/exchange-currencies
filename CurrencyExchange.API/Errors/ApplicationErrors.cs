@@ -41,5 +41,17 @@ namespace CurrencyExchange.API.Errors
             public static Error InvalidLength(string? name = null) =>
                 CreateError(nameof(InvalidLength), $"The length of the{(name is null ? "" : $" {name}")} currency code should be 3");
         }
+        
+        public static class ExchangeErrors
+        {
+             public static Error CreateError(string code, string? description = null) =>
+                new Error("Exchange." + code, description);
+
+             public static Error NegativeOrZeroAmount() =>
+                 CreateError(nameof(NegativeOrZeroAmount), "Amount can't be negative or zero value");
+
+             public static Error NotFound() =>
+                 CreateError(nameof(NotFound), "The rate with specified code was not found");
+        }
     }
 }

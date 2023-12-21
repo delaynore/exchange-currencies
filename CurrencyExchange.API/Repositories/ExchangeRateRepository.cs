@@ -36,6 +36,66 @@ namespace CurrencyExchange.API.Repositories
                 .SingleOrDefault(x => x.BaseCurrency.Code.Equals(baseCode) && x.TargetCurrency.Code.Equals(targetCode));
         }
 
+        public decimal? FindSimilarRate(string baseCode, string targetCode)
+        {
+            var query = _context.ExchangeRates
+                .Include(x => x.BaseCurrency)
+                .Include(x => x.TargetCurrency)
+                .AsNoTracking();
+            foreach (var a in query)
+            {
+                foreach (var b in query)
+                {
+                    if (b.BaseCurrency.Code == targetCode && b.TargetCurrency.Code == baseCode)
+                        return 1 / b.Rate;
+                    if (b.BaseCurrency.Code == baseCode && b.TargetCurrency.Code == targetCode)
+                        return b.Rate;
+                    if (a.Id != b.Id)
+                    {
+                        if(a.BaseCurrency.Code == baseCode && b.BaseCurrency.Code == targetCode &&
+                            a.TargetCurrencyId == b.TargetCurrencyId)
+                        {
+                            return a.Rate / (1 / b.Rate);
+                            /// goal: a -> b
+                            ///a -> c
+                            /// b -> c
+                        }
+                        if(a.TargetCurrency.Code == baseCode && b.TargetCurrency.Code == targetCode &&
+                           a.BaseCurrencyId == b.BaseCurrencyId)
+                        {
+                            return (1 / a.Rate) * b.Rate;
+                            /// goal: a -> b
+                            ///c -> a
+                            /// c -> b
+                        }
+                        if(a.BaseCurrency.Code == baseCode && 
+                           a.TargetCurrencyId == b.BaseCurrencyId && 
+                           b.BaseCurrencyId == a.TargetCurrencyId && 
+                           b.TargetCurrency.Code == targetCode)
+                        {
+                            return a.Rate * b.Rate;
+                            /// goal: a -> b
+                            ///a -> c
+                            /// c -> b
+                        }
+                        if(a.BaseCurrency.Code == targetCode && 
+                           a.TargetCurrencyId == b.BaseCurrencyId && 
+                           b.BaseCurrencyId == a.TargetCurrencyId && 
+                           b.TargetCurrency.Code == baseCode)
+                        {
+                            return 1 / (a.Rate * b.Rate);
+                            /// goal: a -> b
+                            ///b -> c
+                            /// c -> a
+                        }
+                    }
+                }
+            }
+
+            return default;
+        }
+        
+        
         public ExchangeRate? GetById(int id)
         {
             return _context.ExchangeRates
