@@ -19,11 +19,8 @@ namespace CurrencyExchange.API.Controllers
         [HttpGet("{code}")]
         public IActionResult GetCurrency(string code)
         {
-            if (code.Length != 3) return BadRequest(new { message = $"Invalid code of currency - {code}" });
-
             var currency = _currencyService.GetCurrencyByCode(code.ToUpper());
             if (currency.IsFailure) return NotFound();
-
             return Ok(currency);
         }
 
@@ -31,16 +28,12 @@ namespace CurrencyExchange.API.Controllers
         public IActionResult CreateCurrency(CurrencyRequest newCurrency)
         {
             var result = _currencyService.CreateCurrency(newCurrency);
-            if (result.IsFailure) return BadRequest(result.Error);
-            return Created();
+            return result.IsSuccess ? Created() : BadRequest(result.Error);
         }
 
         [HttpPut("{id:int}")]
         public IActionResult UpdateCurrency(int id, CurrencyRequest updateCurrency)
         {
-            var check = _currencyService.GetCurrencyById(id);
-            if (check.IsFailure) return BadRequest(check.IsFailure);
-
             var result = _currencyService.UpdateCurrency(id, updateCurrency);
             if (result.IsFailure) return BadRequest(result.Error);
             return Ok();
