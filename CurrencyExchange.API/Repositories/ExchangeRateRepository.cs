@@ -33,11 +33,15 @@ namespace CurrencyExchange.API.Repositories
             return _context.ExchangeRates
                 .Include(x => x.BaseCurrency)
                 .Include(x => x.TargetCurrency)
-                .SingleOrDefault(x => x.BaseCurrency.Code.Equals(baseCode) && x.TargetCurrency.Code.Equals(targetCode));
+                .SingleOrDefault(x => 
+                    x.BaseCurrency.Code.Equals(baseCode, StringComparison.InvariantCultureIgnoreCase) && 
+                    x.TargetCurrency.Code.Equals(targetCode, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public decimal? FindSimilarRate(string baseCode, string targetCode)
         {
+            baseCode = baseCode.ToUpper();
+            targetCode = targetCode.ToUpper();
             var query = _context.ExchangeRates
                 .Include(x => x.BaseCurrency)
                 .Include(x => x.TargetCurrency)
