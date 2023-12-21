@@ -13,7 +13,7 @@ namespace CurrencyExchange.API.Services
         public Result<int> CreateCurrency(CurrencyRequest currency)
         {
             if (_currencyRepository.GetCurrencyByCode(currency.Code) is not null)
-                return Result.Failure<int>(ApplicationErrors.CurrencyErrors.AlreadyExists);
+                return Result.Failure<int>(ApplicationErrors.CurrencyErrors.AlreadyExists(currency.Code));
 
             var currencyToCreate = new Currency()
             {
@@ -54,10 +54,13 @@ namespace CurrencyExchange.API.Services
 
         public Result<CurrencyResponse> GetCurrencyByCode(string code)
         {
+            if (code.Length != 3)
+                return Result.Failure<CurrencyResponse>(ApplicationErrors.CurrencyErrors.InvalidLength());
+            
             var currency = _currencyRepository.GetCurrencyByCode(code);
             if (currency is null) 
                 return Result
-                    .Failure<CurrencyResponse>(ApplicationErrors.ExchangeRateErrors.NotFound);
+                    .Failure<CurrencyResponse>(ApplicationErrors.CurrencyErrors.NotFound(code));
 
             return new CurrencyResponse(
                 currency.Id,
@@ -71,7 +74,7 @@ namespace CurrencyExchange.API.Services
             var currency = _currencyRepository.GetCurrencyById(id);
             if (currency is null)
                 return Result
-                    .Failure<CurrencyResponse>(ApplicationErrors.ExchangeRateErrors.NotFound);
+                    .Failure<CurrencyResponse>(ApplicationErrors.CurrencyErrors.NotFound(id));
 
             return new CurrencyResponse(
                 currency.Id,
@@ -84,7 +87,7 @@ namespace CurrencyExchange.API.Services
         {
             var currencyToUpdate = _currencyRepository.GetCurrencyById(id);
             if (currencyToUpdate is null)
-                return ApplicationErrors.ExchangeRateErrors.NotFound;
+                return ApplicationErrors.CurrencyErrors.NotFound(id);
 
             currencyToUpdate.Code = currency.Code;
             currencyToUpdate.FullName = currency.FullName;
