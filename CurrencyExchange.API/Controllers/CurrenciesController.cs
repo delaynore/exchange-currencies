@@ -37,7 +37,7 @@ namespace CurrencyExchange.API.Controllers
             return Created();
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public IActionResult UpdateCurrency(int id, CurrencyRequest updateCurrency)
         {
             if (_currencyService.GetCurrencyById(id).IsFailure) return BadRequest();
