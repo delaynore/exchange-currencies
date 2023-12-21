@@ -1,4 +1,5 @@
 using CurrencyExchange.API.Data;
+using CurrencyExchange.API.Middleware;
 using CurrencyExchange.API.Repositories;
 using CurrencyExchange.API.Services;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ builder.Services.AddScoped<IExchangeRateService, ExchangeRateService>();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.MapControllers();
 SeedData.EnsurePopulated(app);
