@@ -1,4 +1,5 @@
 using CurrencyExchange.API.Data;
+using CurrencyExchange.API.Mapping;
 using CurrencyExchange.API.Middleware;
 using CurrencyExchange.API.Repositories;
 using CurrencyExchange.API.Services;
@@ -10,7 +11,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddDbContext<CurrencyExchangeDbContext>(opts =>
 {
     opts.UseSqlite(builder.Configuration.GetConnectionString("CurrencyExchangeDb"));
