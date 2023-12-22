@@ -19,9 +19,9 @@ namespace CurrencyExchange.API.Controllers
         [HttpGet("{code}")]
         public IActionResult GetCurrency(string code)
         {
-            var currency = _currencyService.GetCurrencyByCode(code.ToUpper());
-            if (currency.IsFailure) return NotFound();
-            return Ok(currency);
+            var result = _currencyService.GetCurrencyByCode(code.ToUpper());
+            if (result.IsFailure) return NotFound();
+            return Ok(result.Value);
         }
 
         [HttpPost]
