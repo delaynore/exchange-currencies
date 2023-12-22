@@ -1,4 +1,6 @@
-﻿using CurrencyExchange.API.Errors;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using CurrencyExchange.API.Errors;
 using CurrencyExchange.API.Models;
 using CurrencyExchange.API.Models.Contracts.Currency;
 using CurrencyExchange.API.Repositories;
@@ -6,21 +8,16 @@ using CurrencyExchange.API.Response;
 
 namespace CurrencyExchange.API.Services
 {
-    public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrencyService
+    public class CurrencyService(ICurrencyRepository currencyRepository, IMapper mapper) : ICurrencyService
     {
         private readonly ICurrencyRepository _currencyRepository = currencyRepository;
-
+        private readonly IMapper _mapper = mapper;
         public Result<int> CreateCurrency(CurrencyRequest currency)
         {
             if (_currencyRepository.GetCurrencyByCode(currency.Code) is not null)
                 return Result.Failure<int>(ApplicationErrors.CurrencyErrors.AlreadyExists(currency.Code));
 
-            var currencyToCreate = new Currency()
-            {
-                FullName = currency.FullName,
-                Code = currency.Code,
-                Sign = currency.Sign,
-            };
+            var currencyToCreate = _mapper.Map<Currency>(currency);
             
             _currencyRepository.CreateCurrency(currencyToCreate);
             return currencyToCreate.Id;
@@ -42,13 +39,9 @@ namespace CurrencyExchange.API.Services
 
         public Result<List<CurrencyResponse>> GetAll()
         {
-           return _currencyRepository
+            return _currencyRepository
                 .GetAll()
-                .Select(d => new CurrencyResponse(
-                    d.Id,
-                    d.Code,
-                    d.FullName,
-                    d.Sign))
+                .ProjectTo<CurrencyResponse>(_mapper.ConfigurationProvider)
                 .ToList();
         }
 
@@ -61,12 +54,7 @@ namespace CurrencyExchange.API.Services
             if (currency is null) 
                 return Result
                     .Failure<CurrencyResponse>(ApplicationErrors.CurrencyErrors.NotFound(code));
-
-            return new CurrencyResponse(
-                currency.Id,
-                currency.Code,
-                currency.FullName,
-                currency.Sign);
+            return _mapper.Map<CurrencyResponse>(currency);
         }
 
         public Result<CurrencyResponse> GetCurrencyById(int id)
@@ -75,12 +63,7 @@ namespace CurrencyExchange.API.Services
             if (currency is null)
                 return Result
                     .Failure<CurrencyResponse>(ApplicationErrors.CurrencyErrors.NotFound(id));
-
-            return new CurrencyResponse(
-                currency.Id,
-                currency.Code,
-                currency.FullName,
-                currency.Sign);
+            return _mapper.Map<CurrencyResponse>(currency);
         }
 
         public Result UpdateCurrency(int id, CurrencyRequest currency)

@@ -28,7 +28,8 @@ namespace CurrencyExchange.API.Repositories
 
         public Currency? GetCurrencyByCode(string code)
         {
-            return _context.Currencies.AsNoTracking().FirstOrDefault(x => x.Code.Equals(code, StringComparison.InvariantCultureIgnoreCase));
+            code = code.ToUpper();
+            return _context.Currencies.AsNoTracking().FirstOrDefault(x => x.Code.Equals(code));
         }
 
         public Currency? GetCurrencyById(int id)

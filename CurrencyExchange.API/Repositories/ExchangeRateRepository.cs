@@ -30,12 +30,14 @@ namespace CurrencyExchange.API.Repositories
 
         public ExchangeRate? GetByCodes(string baseCode, string targetCode)
         {
+            baseCode = baseCode.ToUpper();
+            targetCode = targetCode.ToUpper();
             return _context.ExchangeRates
                 .Include(x => x.BaseCurrency)
                 .Include(x => x.TargetCurrency)
                 .SingleOrDefault(x => 
-                    x.BaseCurrency.Code.Equals(baseCode, StringComparison.InvariantCultureIgnoreCase) && 
-                    x.TargetCurrency.Code.Equals(targetCode, StringComparison.InvariantCultureIgnoreCase));
+                    x.BaseCurrency.Code.Equals(baseCode) && 
+                    x.TargetCurrency.Code.Equals(targetCode));
         }
 
         public decimal? FindSimilarRate(string baseCode, string targetCode)
