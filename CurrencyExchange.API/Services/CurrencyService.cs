@@ -12,15 +12,15 @@ namespace CurrencyExchange.API.Services
     {
         private readonly ICurrencyRepository _currencyRepository = currencyRepository;
         private readonly IMapper _mapper = mapper;
-        public Result<int> CreateCurrency(CurrencyRequest currency)
+        public Result<CurrencyResponse> CreateCurrency(CurrencyRequest currency)
         {
             if (_currencyRepository.GetCurrencyByCode(currency.Code) is not null)
-                return Result.Failure<int>(ApplicationErrors.CurrencyErrors.AlreadyExists(currency.Code));
+                return Result.Failure<CurrencyResponse>(ApplicationErrors.CurrencyErrors.AlreadyExists(currency.Code));
 
             var currencyToCreate = _mapper.Map<Currency>(currency);
             
             _currencyRepository.CreateCurrency(currencyToCreate);
-            return currencyToCreate.Id;
+            return _mapper.Map<CurrencyResponse>(currencyToCreate);
         }
 
         public Result DeleteCurrency(int id)

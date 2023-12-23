@@ -11,7 +11,7 @@ namespace CurrencyExchange.API.Services
         Result<ExchangeRateResponse> GetById(int id);
         Result<ExchangeRateResponse> GetByCodes(string baseCode, string targetCode);
 
-        Result<int> Create(ExchangeRateRequest exchangeRate);
+        Result<ExchangeRateResponse> Create(ExchangeRateRequest exchangeRate);
         Result Update(int id, ExchangeRateRequest exchangeRate);
         Result Delete(int id);
     }

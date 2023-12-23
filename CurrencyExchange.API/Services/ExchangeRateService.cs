@@ -18,22 +18,22 @@ namespace CurrencyExchange.API.Services
         private readonly ICurrencyRepository _currencyRepository = currencyRepository;
         private readonly IMapper _mapper = mapper;
 
-        public Result<int> Create(ExchangeRateRequest exchangeRate)
+        public Result<ExchangeRateResponse> Create(ExchangeRateRequest exchangeRate)
         {
             if (_currencyRepository.GetCurrencyById(exchangeRate.TargetCurrencyId) is null)
-                return Result.Failure<int>(ApplicationErrors.CurrencyErrors.NotFound(exchangeRate.TargetCurrencyId));
+                return Result.Failure<ExchangeRateResponse>(ApplicationErrors.CurrencyErrors.NotFound(exchangeRate.TargetCurrencyId));
 
             if (_currencyRepository.GetCurrencyById(exchangeRate.BaseCurrencyId) is null)
-                return Result.Failure<int>(ApplicationErrors.CurrencyErrors.NotFound(exchangeRate.BaseCurrencyId));
+                return Result.Failure<ExchangeRateResponse>(ApplicationErrors.CurrencyErrors.NotFound(exchangeRate.BaseCurrencyId));
 
             if (exchangeRate.BaseCurrencyId == exchangeRate.TargetCurrencyId)
-                return Result.Failure<int>(ApplicationErrors.ExchangeRateErrors.SameCurrencies());
+                return Result.Failure<ExchangeRateResponse>(ApplicationErrors.ExchangeRateErrors.SameCurrencies());
 
             var rateToCreate = _mapper.Map<ExchangeRate>(exchangeRate);
             try
             {
                 _exchangeRateRepository.Create(rateToCreate);
-                return rateToCreate.Id;
+                return _mapper.Map<ExchangeRateResponse>(_exchangeRateRepository.GetById(rateToCreate.Id));
             }
             catch (Exception)
             {

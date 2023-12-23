@@ -9,7 +9,7 @@ namespace CurrencyExchange.API.Services
         Result<List<CurrencyResponse>> GetAll();
         Result<CurrencyResponse> GetCurrencyById(int id);
         Result<CurrencyResponse> GetCurrencyByCode(string code);
-        Result<int> CreateCurrency(CurrencyRequest currency);
+        Result<CurrencyResponse> CreateCurrency(CurrencyRequest currency);
         Result UpdateCurrency(int id, CurrencyRequest currency);
         Result DeleteCurrency(int id);
     }

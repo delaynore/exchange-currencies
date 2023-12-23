@@ -28,7 +28,12 @@ namespace CurrencyExchange.API.Controllers
         public IActionResult CreateCurrency(CurrencyRequest newCurrency)
         {
             var result = _currencyService.CreateCurrency(newCurrency);
-            return result.IsSuccess ? Created() : BadRequest(result.Error);
+            return result.IsSuccess 
+                ? CreatedAtAction(
+                    nameof(GetCurrency), 
+                    new { result.Value.Code }, 
+                    result.Value) 
+                : BadRequest(result.Error);
         }
 
         [HttpPut("{id:int}")]

@@ -28,7 +28,16 @@ namespace CurrencyExchange.API.Controllers
         public IActionResult CreateExchangeRate(ExchangeRateRequest newExchangeRate)
         {
             var result = _exchangeRateService.Create(newExchangeRate);
-            return result.IsSuccess ? Created() : BadRequest(result.Error);
+            return result.IsSuccess 
+                ? CreatedAtAction(
+                    nameof(GetExchangeRate), 
+                    new
+                    {
+                        baseCurrency = result.Value.BaseCurrency.Code, 
+                        targetCurrency = result.Value.TargetCurrency.Code
+                    },
+                    result.Value) 
+                : BadRequest(result.Error);
         }
 
         [HttpDelete("{id:int}")]
