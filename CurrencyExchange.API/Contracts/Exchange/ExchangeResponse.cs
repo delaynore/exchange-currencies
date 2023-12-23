@@ -1,6 +1,6 @@
-﻿using CurrencyExchange.API.Models.Contracts.Currency;
+﻿using CurrencyExchange.API.Contracts.Currency;
 
-namespace CurrencyExchange.API.Models.Contracts.Exchange;
+namespace CurrencyExchange.API.Contracts.Exchange;
 
 public record ExchangeResponse(
     CurrencyResponse BaseCurrency,

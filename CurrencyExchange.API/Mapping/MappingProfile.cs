@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using AutoMapper;
+﻿using AutoMapper;
 using CurrencyExchange.API.Models;
-using CurrencyExchange.API.Models.Contracts.Currency;
-using CurrencyExchange.API.Models.Contracts.ExchangeRate;
+using CurrencyExchange.API.Contracts.Currency;
+using CurrencyExchange.API.Contracts.ExchangeRate;
 
 namespace CurrencyExchange.API.Mapping;
 

@@ -9,7 +9,8 @@ public class ExchangeController(IExchangeService exchangeService) : ApiBaseContr
     public IActionResult ExchangeCurrency(string from, string to, decimal amount)
     {
         var result = exchangeService.Exchange(from, to, amount);
-        if (result.IsFailure) return BadRequest(result.Error);
-        return Ok(result.Value);
+        return result.IsSuccess 
+            ? Ok(result.Value) 
+            : BadRequest(result.Error) ;
     }
 }

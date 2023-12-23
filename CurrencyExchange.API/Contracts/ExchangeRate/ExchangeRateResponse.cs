@@ -1,6 +1,6 @@
-﻿using CurrencyExchange.API.Models.Contracts.Currency;
+﻿using CurrencyExchange.API.Contracts.Currency;
 
-namespace CurrencyExchange.API.Models.Contracts.ExchangeRate
+namespace CurrencyExchange.API.Contracts.ExchangeRate
 {
     public record ExchangeRateResponse(
         int ExchangeRateId,

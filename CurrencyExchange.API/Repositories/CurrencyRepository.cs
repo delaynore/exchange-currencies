@@ -7,40 +7,38 @@ namespace CurrencyExchange.API.Repositories
     public sealed class CurrencyRepository(CurrencyExchangeDbContext context) 
         : ICurrencyRepository
     {
-        private readonly CurrencyExchangeDbContext _context = context;
-
-        public void CreateCurrency(Currency currency)
-        {
-            _context.Currencies.Add(currency);
-            _context.SaveChanges();
-        }
-
-        public void DeleteCurrency(int id)
-        {
-            _context.Currencies.Where(x=>x.Id.Equals(id)).ExecuteDelete();
-            _context.SaveChanges();
-        }
-
         public IQueryable<Currency> GetAll()
         {
-            return _context.Currencies.AsNoTracking();
+            return context.Currencies.AsNoTracking();
         }
 
         public Currency? GetCurrencyByCode(string code)
         {
             code = code.ToUpper();
-            return _context.Currencies.AsNoTracking().FirstOrDefault(x => x.Code.Equals(code));
+            return context.Currencies.AsNoTracking().FirstOrDefault(x => x.Code.Equals(code));
         }
 
         public Currency? GetCurrencyById(int id)
         {
-            return _context.Currencies.AsNoTracking().FirstOrDefault(x => x.Id.Equals(id));
+            return context.Currencies.AsNoTracking().FirstOrDefault(x => x.Id.Equals(id));
         }
 
+        public void CreateCurrency(Currency currency)
+        {
+            context.Currencies.Add(currency);
+            context.SaveChanges();
+        }
+        
         public void UpdateCurrency(Currency currency)
         {
-            _context.Currencies.Update(currency);
-            _context.SaveChanges();
+            context.Currencies.Update(currency);
+            context.SaveChanges();
+        }
+        
+        public void DeleteCurrency(int id)
+        {
+            context.Currencies.Where(x=>x.Id.Equals(id)).ExecuteDelete();
+            context.SaveChanges();
         }
     }
 }

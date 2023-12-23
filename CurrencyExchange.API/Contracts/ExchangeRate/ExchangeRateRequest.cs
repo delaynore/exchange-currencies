@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CurrencyExchange.API.Models.Contracts.ExchangeRate
+namespace CurrencyExchange.API.Contracts.ExchangeRate
 {
     public class ExchangeRateRequest
     {

@@ -44,7 +44,7 @@ namespace CurrencyExchange.API.Errors
         
         public static class ExchangeErrors
         {
-             public static Error CreateError(string code, string? description = null) =>
+             private static Error CreateError(string code, string? description = null) =>
                 new Error("Exchange." + code, description);
 
              public static Error NegativeOrZeroAmount() =>
