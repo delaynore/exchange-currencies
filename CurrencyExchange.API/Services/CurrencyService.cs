@@ -14,11 +14,11 @@ namespace CurrencyExchange.API.Services
         private readonly IMapper _mapper = mapper;
         public Result<CurrencyResponse> CreateCurrency(CurrencyRequest currency)
         {
-            if (_currencyRepository.GetCurrencyByCode(currency.Code) is not null)
+            var currencyToCreate = _mapper.Map<Currency>(currency);
+            currencyToCreate.Code = currencyToCreate.Code.ToUpper();
+            if (_currencyRepository.GetCurrencyByCode(currencyToCreate.Code) is not null)
                 return Result.Failure<CurrencyResponse>(ApplicationErrors.CurrencyErrors.AlreadyExists(currency.Code));
 
-            var currencyToCreate = _mapper.Map<Currency>(currency);
-            
             _currencyRepository.CreateCurrency(currencyToCreate);
             return _mapper.Map<CurrencyResponse>(currencyToCreate);
         }
