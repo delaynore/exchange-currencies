@@ -7,27 +7,27 @@ namespace CurrencyExchange.API.Controllers
     public class CurrenciesController(ICurrencyService currencyService) : ApiBaseController
     {
         [HttpGet]
-        public IActionResult GetAllCurrencies()
+        public async Task<IActionResult> GetAllCurrencies()
         {
-            var result = currencyService.GetAll();
+            var result = await currencyService.GetAll();
             return result.IsSuccess 
                 ? Ok(result.Value) 
                 : NotFound();
         }
 
         [HttpGet("{code}")]
-        public IActionResult GetCurrency(string code)
+        public async Task<IActionResult> GetCurrency(string code)
         {
-            var result = currencyService.GetCurrencyByCode(code);
+            var result = await currencyService.GetCurrencyByCode(code);
             return result.IsSuccess 
                 ? Ok(result.Value)
                 : NotFound();
         }
 
         [HttpPost]
-        public IActionResult CreateCurrency(CurrencyRequest newCurrency)
+        public async Task<IActionResult> CreateCurrency(CurrencyRequest newCurrency)
         {
-            var result = currencyService.CreateCurrency(newCurrency);
+            var result = await currencyService.CreateCurrency(newCurrency);
             return result.IsSuccess 
                 ? CreatedAtAction(
                     nameof(GetCurrency), 
@@ -37,18 +37,18 @@ namespace CurrencyExchange.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult UpdateCurrency(int id, CurrencyRequest updateCurrency)
+        public async Task<IActionResult> UpdateCurrency(int id, CurrencyRequest updateCurrency)
         {
-            var result = currencyService.UpdateCurrency(id, updateCurrency);
+            var result = await currencyService.UpdateCurrency(id, updateCurrency);
             return result.IsSuccess 
                 ? Ok()
                 : BadRequest(result.Error);
         }
 
         [HttpDelete("{id:int}")]
-        public IActionResult DeleteCurrency(int id)
+        public async Task<IActionResult> DeleteCurrency(int id)
         {
-            var result = currencyService.DeleteCurrency(id);
+            var result = await currencyService.DeleteCurrency(id);
             return result.IsSuccess 
                 ? NoContent() 
                 : BadRequest(result.Error) ;

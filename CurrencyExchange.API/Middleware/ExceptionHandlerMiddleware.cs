@@ -18,7 +18,7 @@ public class ExceptionHandlerMiddleware(RequestDelegate next)
             await context.Response.WriteAsJsonAsync(new
             {
                 message = "Internal server error",
-                details = e.Message
+                details = e.Message,
             });
         }
     }
