@@ -16,14 +16,20 @@ namespace CurrencyExchange.API.Services
     {
         public async Task<Result<ExchangeRateResponse>> Create(ExchangeRateRequest exchangeRate)
         {
-            if (await currencyRepository.GetCurrencyById(exchangeRate.TargetCurrencyId) is null)
-                return Result.Failure<ExchangeRateResponse>(ApplicationErrors.CurrencyErrors.NotFound(exchangeRate.TargetCurrencyId));
-
-            if (await currencyRepository.GetCurrencyById(exchangeRate.BaseCurrencyId) is null)
-                return Result.Failure<ExchangeRateResponse>(ApplicationErrors.CurrencyErrors.NotFound(exchangeRate.BaseCurrencyId));
-
             if (exchangeRate.BaseCurrencyId == exchangeRate.TargetCurrencyId)
                 return Result.Failure<ExchangeRateResponse>(ApplicationErrors.ExchangeRateErrors.SameCurrencies());
+            
+            var (baseCurrencyTask, targetCurrencyTask) = (
+                currencyRepository.GetCurrencyById(exchangeRate.BaseCurrencyId),
+                currencyRepository.GetCurrencyById(exchangeRate.TargetCurrencyId)
+                );
+            Task.WaitAll(baseCurrencyTask, targetCurrencyTask);
+            
+            if (targetCurrencyTask.Result is null)
+                return Result.Failure<ExchangeRateResponse>(ApplicationErrors.CurrencyErrors.NotFound(exchangeRate.TargetCurrencyId));
+
+            if (baseCurrencyTask.Result is null)
+                return Result.Failure<ExchangeRateResponse>(ApplicationErrors.CurrencyErrors.NotFound(exchangeRate.BaseCurrencyId));
 
             var rateToCreate = mapper.Map<ExchangeRate>(exchangeRate);
             await exchangeRateRepository.Create(rateToCreate);
