@@ -11,6 +11,6 @@ public class ExchangeController(IExchangeService exchangeService) : ApiBaseContr
         var result = exchangeService.Exchange(from, to, amount);
         return result.IsSuccess 
             ? Ok(result.Value) 
-            : BadRequest(result.Error) ;
+            : BadRequest(result.Error);
     }
 }
