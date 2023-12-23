@@ -1,4 +1,5 @@
-﻿using CurrencyExchange.API.Errors;
+﻿using AutoMapper;
+using CurrencyExchange.API.Errors;
 using CurrencyExchange.API.Contracts.Currency;
 using CurrencyExchange.API.Contracts.Exchange;
 using CurrencyExchange.API.Repositories;
@@ -6,7 +7,10 @@ using CurrencyExchange.API.Response;
 
 namespace CurrencyExchange.API.Services;
 
-public class ExchangeService(IExchangeRateRepository exchangeRateRepository, ICurrencyRepository currencyRepository) : IExchangeService
+public class ExchangeService(
+    IExchangeRateRepository exchangeRateRepository,
+    ICurrencyRepository currencyRepository,
+    IMapper mapper) : IExchangeService
 {
     public async Task<Result<ExchangeResponse>> Exchange(string baseCode, string targetCode, decimal amount)
     {
@@ -32,16 +36,8 @@ public class ExchangeService(IExchangeRateRepository exchangeRateRepository, ICu
         var targetCurrency = taskTarget.Result!;
         
         return new ExchangeResponse(
-            new CurrencyResponse(
-                baseCurrency.Id,
-                baseCurrency.Code,
-                baseCurrency.FullName,
-                baseCurrency.Sign),
-            new CurrencyResponse(
-                targetCurrency.Id,
-                targetCurrency.Code,
-                targetCurrency.FullName,
-                targetCurrency.Sign), 
+            mapper.Map<CurrencyResponse>(baseCurrency),
+            mapper.Map<CurrencyResponse>(targetCurrency), 
             decimal.Round(potentialRate.Value, 4),
             amount,
             decimal.Round(potentialRate.Value * amount));
