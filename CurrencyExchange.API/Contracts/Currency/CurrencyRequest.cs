@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CurrencyExchange.API.Models.Contracts.Currency
+namespace CurrencyExchange.API.Contracts.Currency
 {
     public class CurrencyRequest
     {

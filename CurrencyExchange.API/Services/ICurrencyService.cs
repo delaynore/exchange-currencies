@@ -1,5 +1,4 @@
-﻿using CurrencyExchange.API.Models;
-using CurrencyExchange.API.Models.Contracts.Currency;
+﻿using CurrencyExchange.API.Contracts.Currency;
 using CurrencyExchange.API.Response;
 
 namespace CurrencyExchange.API.Services

@@ -1,6 +1,6 @@
 ﻿using CurrencyExchange.API.Errors;
-using CurrencyExchange.API.Models.Contracts.Currency;
-using CurrencyExchange.API.Models.Contracts.Exchange;
+using CurrencyExchange.API.Contracts.Currency;
+using CurrencyExchange.API.Contracts.Exchange;
 using CurrencyExchange.API.Repositories;
 using CurrencyExchange.API.Response;
 

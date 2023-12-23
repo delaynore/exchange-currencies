@@ -1,5 +1,4 @@
-﻿using CurrencyExchange.API.Models;
-using CurrencyExchange.API.Models.Contracts.ExchangeRate;
+﻿using CurrencyExchange.API.Contracts.ExchangeRate;
 using CurrencyExchange.API.Response;
 
 

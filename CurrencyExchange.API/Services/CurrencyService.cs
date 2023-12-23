@@ -2,7 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using CurrencyExchange.API.Errors;
 using CurrencyExchange.API.Models;
-using CurrencyExchange.API.Models.Contracts.Currency;
+using CurrencyExchange.API.Contracts.Currency;
 using CurrencyExchange.API.Repositories;
 using CurrencyExchange.API.Response;
 
