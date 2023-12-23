@@ -25,16 +25,8 @@ namespace CurrencyExchange.API.Services
 
         public Result DeleteCurrency(int id)
         {
-            try
-            {
-                _currencyRepository.DeleteCurrency(id);
-                return Result.Success();
-            }
-            catch (Exception)
-            {
-                throw;
-                //return Result.Failure(new Error("Global.DeleteException"));
-            }
+            _currencyRepository.DeleteCurrency(id);
+            return Result.Success();
         }
 
         public Result<List<CurrencyResponse>> GetAll()
@@ -76,14 +68,7 @@ namespace CurrencyExchange.API.Services
             currencyToUpdate.FullName = currency.FullName;
             currencyToUpdate.Sign = currency.Sign;
 
-            try
-            {
-                _currencyRepository.UpdateCurrency(currencyToUpdate);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            _currencyRepository.UpdateCurrency(currencyToUpdate);
             return Result.Success();
         }
     }

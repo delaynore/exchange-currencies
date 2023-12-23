@@ -62,17 +62,17 @@ namespace CurrencyExchange.API.Repositories
                             a.TargetCurrencyId == b.TargetCurrencyId)
                         {
                             return a.Rate / (1 / b.Rate);
-                            /// goal: a -> b
-                            ///a -> c
-                            /// b -> c
+                            // goal: a -> b
+                            //a -> c
+                            // b -> c
                         }
                         if(a.TargetCurrency.Code == baseCode && b.TargetCurrency.Code == targetCode &&
                            a.BaseCurrencyId == b.BaseCurrencyId)
                         {
                             return (1 / a.Rate) * b.Rate;
-                            /// goal: a -> b
-                            ///c -> a
-                            /// c -> b
+                            // goal: a -> b
+                            //c -> a
+                            // c -> b
                         }
                         if(a.BaseCurrency.Code == baseCode && 
                            a.TargetCurrencyId == b.BaseCurrencyId && 
@@ -80,9 +80,9 @@ namespace CurrencyExchange.API.Repositories
                            b.TargetCurrency.Code == targetCode)
                         {
                             return a.Rate * b.Rate;
-                            /// goal: a -> b
-                            ///a -> c
-                            /// c -> b
+                            // goal: a -> b
+                            //a -> c
+                            // c -> b
                         }
                         if(a.BaseCurrency.Code == targetCode && 
                            a.TargetCurrencyId == b.BaseCurrencyId && 
@@ -90,9 +90,9 @@ namespace CurrencyExchange.API.Repositories
                            b.TargetCurrency.Code == baseCode)
                         {
                             return 1 / (a.Rate * b.Rate);
-                            /// goal: a -> b
-                            ///b -> c
-                            /// c -> a
+                            // goal: a -> b
+                            //b -> c
+                            // c -> a
                         }
                     }
                 }

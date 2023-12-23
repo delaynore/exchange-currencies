@@ -30,30 +30,14 @@ namespace CurrencyExchange.API.Services
                 return Result.Failure<ExchangeRateResponse>(ApplicationErrors.ExchangeRateErrors.SameCurrencies());
 
             var rateToCreate = _mapper.Map<ExchangeRate>(exchangeRate);
-            try
-            {
-                _exchangeRateRepository.Create(rateToCreate);
-                return _mapper.Map<ExchangeRateResponse>(_exchangeRateRepository.GetById(rateToCreate.Id));
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            _exchangeRateRepository.Create(rateToCreate);
+            return _mapper.Map<ExchangeRateResponse>(_exchangeRateRepository.GetById(rateToCreate.Id));
         }
 
         public Result Delete(int id)
         {
-            try
-            {
-                _exchangeRateRepository.Delete(id);
-                return Result.Success();
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            _exchangeRateRepository.Delete(id);
+            return Result.Success();
         }
 
         public Result<List<ExchangeRateResponse>> GetAll()
@@ -100,16 +84,8 @@ namespace CurrencyExchange.API.Services
             exchangeRateToUpdate.TargetCurrencyId = exchangeRate.TargetCurrencyId;
             exchangeRateToUpdate.BaseCurrencyId = exchangeRate.BaseCurrencyId;
 
-            try
-            {
-                _exchangeRateRepository.Update(exchangeRateToUpdate);
-                return Result.Success();
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            _exchangeRateRepository.Update(exchangeRateToUpdate);
+            return Result.Success();
         }
     }
 }
