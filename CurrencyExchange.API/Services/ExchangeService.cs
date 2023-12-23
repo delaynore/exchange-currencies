@@ -8,7 +8,7 @@ namespace CurrencyExchange.API.Services;
 
 public class ExchangeService(IExchangeRateRepository exchangeRateRepository, ICurrencyRepository currencyRepository) : IExchangeService
 {
-    public Result<ExchangeResponse> Exchange(string baseCode, string targetCode, decimal amount)
+    public async Task<Result<ExchangeResponse>> Exchange(string baseCode, string targetCode, decimal amount)
     {
         if (baseCode is null)
             return Result.Failure<ExchangeResponse>(ApplicationErrors.ExchangeRateErrors.NullValue(nameof(baseCode)));
@@ -21,27 +21,29 @@ public class ExchangeService(IExchangeRateRepository exchangeRateRepository, ICu
         if (amount <= 0)
             return Result.Failure<ExchangeResponse>(ApplicationErrors.ExchangeErrors.NegativeOrZeroAmount());
 
-        var potentialRate = exchangeRateRepository.FindSimilarRate(baseCode, targetCode);
+        var potentialRate =  await exchangeRateRepository.FindSimilarRate(baseCode, targetCode);
         if (!potentialRate.HasValue)
             return Result.Failure<ExchangeResponse>(ApplicationErrors.ExchangeErrors.NotFound());
 
-        var baseCurrency = currencyRepository.GetCurrencyByCode(baseCode)!;
-        var targetCurrency = currencyRepository.GetCurrencyByCode(targetCode)!;
+        var taskBase = currencyRepository.GetCurrencyByCode(baseCode);
+        var taskTarget = currencyRepository.GetCurrencyByCode(targetCode);
+        Task.WaitAll(taskBase, taskTarget);
+        var baseCurrency = taskBase.Result!;
+        var targetCurrency = taskTarget.Result!;
         
-            return new ExchangeResponse(
-                new CurrencyResponse(
-                    baseCurrency.Id,
-                    baseCurrency.Code,
-                    baseCurrency.FullName,
-                    baseCurrency.Sign),
-                new CurrencyResponse(
-                    targetCurrency.Id,
-                    targetCurrency.Code,
-                    targetCurrency.FullName,
-                    targetCurrency.Sign),
-                decimal.Round(potentialRate.Value, 4),
-                amount,
-                decimal.Round(potentialRate.Value * amount)
-                    );
+        return new ExchangeResponse(
+            new CurrencyResponse(
+                baseCurrency.Id,
+                baseCurrency.Code,
+                baseCurrency.FullName,
+                baseCurrency.Sign),
+            new CurrencyResponse(
+                targetCurrency.Id,
+                targetCurrency.Code,
+                targetCurrency.FullName,
+                targetCurrency.Sign), 
+            decimal.Round(potentialRate.Value, 4),
+            amount,
+            decimal.Round(potentialRate.Value * amount));
     }
 }

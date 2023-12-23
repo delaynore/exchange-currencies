@@ -14,23 +14,25 @@ namespace CurrencyExchange.API.Repositories
                 .AsNoTracking();
         }
 
-        public ExchangeRate? GetByCodes(string baseCode, string targetCode)
+        public async Task<ExchangeRate?> GetByCodes(string baseCode, string targetCode)
         {
             baseCode = baseCode.ToUpper();
             targetCode = targetCode.ToUpper();
-            return context.ExchangeRates
+            return await context.ExchangeRates
                 .Include(x => x.BaseCurrency)
                 .Include(x => x.TargetCurrency)
-                .SingleOrDefault(x => 
+                .SingleOrDefaultAsync(x => 
                     x.BaseCurrency.Code.Equals(baseCode) && 
                     x.TargetCurrency.Code.Equals(targetCode));
         }
 
-        public decimal? FindSimilarRate(string baseCode, string targetCode)
+        public async Task<decimal?> FindSimilarRate(string baseCode, string targetCode)
         {
-            baseCode = baseCode.ToUpper();
-            targetCode = targetCode.ToUpper();
-            var query = context.ExchangeRates
+            return await Task.Run(() =>
+            {
+                baseCode = baseCode.ToUpper();
+                targetCode = targetCode.ToUpper();
+                var query = context.ExchangeRates
                 .Include(x => x.BaseCurrency)
                 .Include(x => x.TargetCurrency)
                 .AsNoTracking();
@@ -81,35 +83,35 @@ namespace CurrencyExchange.API.Repositories
                     }
                 }
             }
-
             return default;
+            });
         }
         
         
-        public ExchangeRate? GetById(int id)
+        public async Task<ExchangeRate?> GetById(int id)
         {
-            return context.ExchangeRates
+            return await context.ExchangeRates
                 .Include(x=>x.BaseCurrency)
                 .Include(x=>x.TargetCurrency)
-                .SingleOrDefault(x => x.Id.Equals(id));
+                .SingleOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public void Create(ExchangeRate exchangeRate)
+        public async Task Create(ExchangeRate exchangeRate)
         {
-            context.ExchangeRates.Add(exchangeRate);
-            context.SaveChanges();
+            await context.ExchangeRates.AddAsync(exchangeRate);
+            await context.SaveChangesAsync();
         }
         
-        public void Update(ExchangeRate exchangeRate)
+        public async Task Update(ExchangeRate exchangeRate)
         {
             context.ExchangeRates.Update(exchangeRate);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
         
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            context.ExchangeRates.Where(x => x.Id.Equals(id)).ExecuteDelete();
-            context.SaveChanges();
+            await context.ExchangeRates.Where(x => x.Id.Equals(id)).ExecuteDeleteAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

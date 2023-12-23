@@ -12,33 +12,39 @@ namespace CurrencyExchange.API.Repositories
             return context.Currencies.AsNoTracking();
         }
 
-        public Currency? GetCurrencyByCode(string code)
+        public async Task<Currency?> GetCurrencyByCode(string code)
         {
             code = code.ToUpper();
-            return context.Currencies.AsNoTracking().FirstOrDefault(x => x.Code.Equals(code));
+            return await context
+                .Currencies
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.Code.Equals(code));
         }
 
-        public Currency? GetCurrencyById(int id)
+        public async Task<Currency?> GetCurrencyById(int id)
         {
-            return context.Currencies.AsNoTracking().FirstOrDefault(x => x.Id.Equals(id));
+            return await context
+                .Currencies
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public void CreateCurrency(Currency currency)
+        public async Task CreateCurrency(Currency currency)
         {
-            context.Currencies.Add(currency);
-            context.SaveChanges();
+            await context.Currencies.AddAsync(currency);
+            await context.SaveChangesAsync();
         }
         
-        public void UpdateCurrency(Currency currency)
+        public async Task UpdateCurrency(Currency currency)
         {
             context.Currencies.Update(currency);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
         
-        public void DeleteCurrency(int id)
+        public async Task DeleteCurrency(int id)
         {
-            context.Currencies.Where(x=>x.Id.Equals(id)).ExecuteDelete();
-            context.SaveChanges();
+            await context.Currencies.Where(x=>x.Id.Equals(id)).ExecuteDeleteAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

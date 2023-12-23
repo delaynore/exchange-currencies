@@ -5,6 +5,7 @@ using CurrencyExchange.API.Contracts.ExchangeRate;
 using CurrencyExchange.API.Repositories;
 using CurrencyExchange.API.Response;
 using CurrencyExchange.API.Errors;
+using Microsoft.EntityFrameworkCore;
 
 namespace CurrencyExchange.API.Services
 {
@@ -13,42 +14,37 @@ namespace CurrencyExchange.API.Services
         ICurrencyRepository currencyRepository,
         IMapper mapper) : IExchangeRateService
     {
-
-        private readonly IExchangeRateRepository _exchangeRateRepository = exchangeRateRepository;
-        private readonly ICurrencyRepository _currencyRepository = currencyRepository;
-        private readonly IMapper _mapper = mapper;
-
-        public Result<ExchangeRateResponse> Create(ExchangeRateRequest exchangeRate)
+        public async Task<Result<ExchangeRateResponse>> Create(ExchangeRateRequest exchangeRate)
         {
-            if (_currencyRepository.GetCurrencyById(exchangeRate.TargetCurrencyId) is null)
+            if (await currencyRepository.GetCurrencyById(exchangeRate.TargetCurrencyId) is null)
                 return Result.Failure<ExchangeRateResponse>(ApplicationErrors.CurrencyErrors.NotFound(exchangeRate.TargetCurrencyId));
 
-            if (_currencyRepository.GetCurrencyById(exchangeRate.BaseCurrencyId) is null)
+            if (await currencyRepository.GetCurrencyById(exchangeRate.BaseCurrencyId) is null)
                 return Result.Failure<ExchangeRateResponse>(ApplicationErrors.CurrencyErrors.NotFound(exchangeRate.BaseCurrencyId));
 
             if (exchangeRate.BaseCurrencyId == exchangeRate.TargetCurrencyId)
                 return Result.Failure<ExchangeRateResponse>(ApplicationErrors.ExchangeRateErrors.SameCurrencies());
 
-            var rateToCreate = _mapper.Map<ExchangeRate>(exchangeRate);
-            _exchangeRateRepository.Create(rateToCreate);
-            return _mapper.Map<ExchangeRateResponse>(_exchangeRateRepository.GetById(rateToCreate.Id));
+            var rateToCreate = mapper.Map<ExchangeRate>(exchangeRate);
+            await exchangeRateRepository.Create(rateToCreate);
+            return mapper.Map<ExchangeRateResponse>(exchangeRateRepository.GetById(rateToCreate.Id));
         }
 
-        public Result Delete(int id)
+        public async Task<Result> Delete(int id)
         {
-            _exchangeRateRepository.Delete(id);
+            await exchangeRateRepository.Delete(id);
             return Result.Success();
         }
 
-        public Result<List<ExchangeRateResponse>> GetAll()
+        public async Task<Result<List<ExchangeRateResponse>>> GetAll()
         {
-            return _exchangeRateRepository
+            return await exchangeRateRepository
                 .GetAll()
-                .ProjectTo<ExchangeRateResponse>(_mapper.ConfigurationProvider)
-                .ToList();
+                .ProjectTo<ExchangeRateResponse>(mapper.ConfigurationProvider)
+                .ToListAsync();
         }
 
-        public Result<ExchangeRateResponse> GetByCodes(string baseCode, string targetCode)
+        public async Task<Result<ExchangeRateResponse>> GetByCodes(string baseCode, string targetCode)
         {
             if (baseCode is null)
                 return Result.Failure<ExchangeRateResponse>(ApplicationErrors.ExchangeRateErrors.NullValue(nameof(baseCode)));
@@ -60,23 +56,23 @@ namespace CurrencyExchange.API.Services
                 return Result.Failure<ExchangeRateResponse>(ApplicationErrors.ExchangeRateErrors.InvalidLength("target"));
 
 
-            var exchangeRate = _exchangeRateRepository.GetByCodes(baseCode, targetCode);
+            var exchangeRate = await exchangeRateRepository.GetByCodes(baseCode, targetCode);
             if (exchangeRate is null) 
                 return Result.Failure<ExchangeRateResponse>(ApplicationErrors.ExchangeRateErrors.NotFound(baseCode, targetCode));
-            return _mapper.Map<ExchangeRateResponse>(exchangeRate);
+            return mapper.Map<ExchangeRateResponse>(exchangeRate);
         }
 
-        public Result<ExchangeRateResponse> GetById(int id)
+        public async Task<Result<ExchangeRateResponse>> GetById(int id)
         {
-            var exchangeRate = _exchangeRateRepository.GetById(id);
+            var exchangeRate = await exchangeRateRepository.GetById(id);
             if (exchangeRate is null)
                 return Result.Failure<ExchangeRateResponse>(ApplicationErrors.ExchangeRateErrors.NotFound(id));
-            return _mapper.Map<ExchangeRateResponse>(exchangeRate);
+            return mapper.Map<ExchangeRateResponse>(exchangeRate);
         }
 
-        public Result Update(int id, ExchangeRateRequest exchangeRate)
+        public async Task<Result> Update(int id, ExchangeRateRequest exchangeRate)
         {
-            var exchangeRateToUpdate = _exchangeRateRepository.GetById(id);
+            var exchangeRateToUpdate = await exchangeRateRepository.GetById(id);
             if (exchangeRateToUpdate is null) 
                 return Result.Failure(ApplicationErrors.ExchangeRateErrors.NotFound(id));
 
@@ -84,7 +80,7 @@ namespace CurrencyExchange.API.Services
             exchangeRateToUpdate.TargetCurrencyId = exchangeRate.TargetCurrencyId;
             exchangeRateToUpdate.BaseCurrencyId = exchangeRate.BaseCurrencyId;
 
-            _exchangeRateRepository.Update(exchangeRateToUpdate);
+            await exchangeRateRepository.Update(exchangeRateToUpdate);
             return Result.Success();
         }
     }

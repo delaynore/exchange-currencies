@@ -6,12 +6,12 @@ namespace CurrencyExchange.API.Services
 {
     public interface IExchangeRateService
     {
-        Result<List<ExchangeRateResponse>> GetAll();
-        Result<ExchangeRateResponse> GetById(int id);
-        Result<ExchangeRateResponse> GetByCodes(string baseCode, string targetCode);
+        Task<Result<List<ExchangeRateResponse>>> GetAll();
+        Task<Result<ExchangeRateResponse>> GetById(int id);
+        Task<Result<ExchangeRateResponse>> GetByCodes(string baseCode, string targetCode);
 
-        Result<ExchangeRateResponse> Create(ExchangeRateRequest exchangeRate);
-        Result Update(int id, ExchangeRateRequest exchangeRate);
-        Result Delete(int id);
+        Task<Result<ExchangeRateResponse>> Create(ExchangeRateRequest exchangeRate);
+        Task<Result> Update(int id, ExchangeRateRequest exchangeRate);
+        Task<Result> Delete(int id);
     }
 }
