@@ -1,3 +1,4 @@
+using System.Reflection;
 using CurrencyExchange.API.Data;
 using CurrencyExchange.API.Mapping;
 using CurrencyExchange.API.Middleware;
@@ -10,7 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    var basePath = AppContext.BaseDirectory;
+    var xmlPath = Path
+        .Combine(basePath, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+    options.IncludeXmlComments(xmlPath);
+});
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddDbContext<CurrencyExchangeDbContext>(opts =>
 {
