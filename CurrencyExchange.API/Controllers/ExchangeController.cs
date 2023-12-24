@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CurrencyExchange.API.Controllers;
 
 /// <summary>
-/// Exchanging currencies
+/// Exchanging currencies.
 /// </summary>
 /// <param name="exchangeService"></param>
 public class ExchangeController(IExchangeService exchangeService) : ApiBaseController
@@ -16,7 +16,7 @@ public class ExchangeController(IExchangeService exchangeService) : ApiBaseContr
     /// <param name="from">Source currency code.</param>
     /// <param name="to">Target currency code.</param>
     /// <param name="amount">The amount of money exchanged.</param>
-    /// <returns>Exchanged amount of money</returns>
+    /// <returns>Exchanged amount of money.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]

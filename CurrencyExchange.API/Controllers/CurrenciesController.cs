@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace CurrencyExchange.API.Controllers
 {
     /// <summary>
-    /// Currencies management
+    /// Currencies management.
     /// </summary>
     public class CurrenciesController(ICurrencyService currencyService) : ApiBaseController
     {
         /// <summary>
         /// Get all currencies.
         /// </summary>
-        /// <returns>Currencies</returns>
+        /// <returns>Currencies.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(List<CurrencyResponse>),StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -81,7 +81,7 @@ namespace CurrencyExchange.API.Controllers
         /// Delete currency.
         /// </summary>
         /// <param name="id">Currency id.</param>
-        /// <returns>Successful delete currency</returns>
+        /// <returns>Successful delete currency.</returns>
         [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(Error),StatusCodes.Status400BadRequest)]
